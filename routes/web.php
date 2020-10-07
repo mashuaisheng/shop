@@ -25,3 +25,10 @@ Route::get("/goods/index","GoodsController@index");
 Route::get("/goods/update/{id}","GoodsController@update");
 Route::post("/goods/upd/{id}","GoodsController@upd");
 Route::any("/goods/del/{id}","GoodsController@del");
+
+Route::get("/user/reg","UserController@reg");
+Route::post("/user/regdo","UserController@regdo");
+
+Route::get("/user/login","UserController@login");
+Route::post("/user/logindo","UserController@logindo");
+Route::get("/user/index","UserController@index");
