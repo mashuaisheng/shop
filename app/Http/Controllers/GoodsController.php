@@ -38,4 +38,13 @@ class GoodsController extends Controller
             return redirect('/goods/index');
         }
     }
+
+    public function list(){
+        $data=GoodsModel::limit(10)->get();
+        return view('goods.list',['data'=>$data]);
+    }
+    public function defail($id){
+        $data=GoodsModel::where('goods_id',$id)->first();
+        return view('goods.defail',['data'=>$data]);
+    }
 }

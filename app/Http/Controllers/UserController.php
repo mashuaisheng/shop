@@ -11,7 +11,9 @@ class UserController extends Controller
     }
     public function regdo(request $request){
         $data=$request->except('_token');
-        $data['password']=md5(md5($data['password']));
+        $password = $request->input('password');
+        $data["password"] = password_hash($password,PASSWORD_DEFAULT);
+        //$data['password']=md5(md5($data['password']));
         $data['reg_time']=time();
         //dd($data);
     	$res=UserModel::insert($data);
@@ -25,8 +27,12 @@ class UserController extends Controller
     }
     public function logindo(request $request){
         $user=$request->except('_token');
-        $user['password']=md5(md5($user['password']));
-        $admin=UserModel::find($user);
+        $date['last_login'] = time();
+        $date["last_ip"] = ip2long($_SERVER['DB_HOST']);
+
+        //$user['password']=md5(md5($user['password']));
+        $admin=UserModel::find();
+        $admins=UserModel::where("uid",$admin->uid)->update($date);
         if($admin){
             session(['adminuser'=>$admin]);
             $request->session()->save();
