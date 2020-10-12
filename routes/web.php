@@ -14,10 +14,11 @@
 Route::get('/', function () {
     return view('welcome');
 });
-Route::any('/aa', function () {
-    echo "hello world";
+Route::any('/info', function () {
+    phpinfo();
 });
 Route::any("/cc","TestController@aa");
+Route::any("/test1","TestController@test1");
 
 Route::get("/goods/create","GoodsController@create");
 Route::post("/goods/add","GoodsController@add");
@@ -34,3 +35,4 @@ Route::post("/user/regdo","UserController@regdo");
 Route::get("/user/login","UserController@login");
 Route::post("/user/logindo","UserController@logindo");
 Route::get("/user/index","UserController@index");
+Route::get("/user/quit","UserController@quit");

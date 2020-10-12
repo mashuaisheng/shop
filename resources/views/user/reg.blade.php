@@ -27,6 +27,12 @@
 		</div>
 	</div>
 	<div class="form-group">
+		<label for="firstname" class="col-sm-2 control-label">手机号</label>
+		<div class="col-sm-8">
+			<input type="text" class="form-control" name='tel' id="firstname">
+		</div>
+	</div>
+	<div class="form-group">
 		<label for="firstname" class="col-sm-2 control-label">密码</label>
 		<div class="col-sm-8">
 			<input type="password" class="form-control" name='password' id="firstname">

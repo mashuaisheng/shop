@@ -11,7 +11,7 @@
 	<center>
 <h2>用户页面</h2>
 </center>
-<p>{{ __('adminuser') }}</p>
-
+<p>欢迎 {{$_COOKIE['name']}} 登录</p>
+<a href="{{url('/user/quit')}}">退出</a>
 </body>
 </html>
