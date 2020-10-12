@@ -43,6 +43,8 @@ class UserController extends Controller
         $key='login:count:'.$user_name;
         $count=Redis::get($key);
         
+        
+
         if($count>=5){
             //echo "密码错误次数太多了，已被锁定";exit;
             $expire = Redis::ttl($key);
@@ -56,15 +58,23 @@ class UserController extends Controller
                 $minutes = intval(($expire - 3600) / 60);
                 $msg = $hout . '小时' . $minutes . '分钟后';
             }
-            echo '账号被锁定,' . $msg . '接触锁定';
+            echo '账号被锁定,' . $msg . '接触锁定';exit;
         }
+        // if(!$p){
+        //   if($count < 5){
+        //         Redis::incr($key);
+        //     }
+        //     if($count == null || $count == 0){
+        //         Redis::expire($key,60*120);
+        //     }
+        //     $error_count = $count +1;
+        //     echo "密码错误次数为".$error_count."次";
+        // }
+        
         if(!$p){
             $count=Redis::incr($key);//添加数值
             echo "密码错误次数:".$count;exit;
         }
-        
-        
-        
         if($admin){
             setcookie('uid',$admin->uid,time()+3600,'/');
             setcookie('name',$admin->user_name,time()+3600,'/');
@@ -88,7 +98,5 @@ class UserController extends Controller
         Cookie::queue(Cookie::forget('uid'));
         Cookie::queue(Cookie::forget('name'));
         return redirect('/user/login');
-        //跳转页面
-        
     }
 }
