@@ -20,7 +20,6 @@ Route::any('/info', function () {
 Route::any("/cc","TestController@aa");
 Route::any("/test1","TestController@test1");
 
-Route::any("/api/test","TestController@test");
 
 Route::get("/goods/create","GoodsController@create");
 Route::post("/goods/add","GoodsController@add");
@@ -40,4 +39,8 @@ Route::get("/user/index","UserController@index");
 Route::get("/user/quit","UserController@quit");
 
 
-Route::get("/api/onLogin","TestController@Login");
+Route::any("/api/test","ApiController@test");
+Route::get("/api/onLogin","ApiController@Login");
+Route::get("/api/goods","ApiController@goods");
+Route::get("/api/list","ApiController@list");
+Route::any("/wx/wxclogin","XcxController@login");
