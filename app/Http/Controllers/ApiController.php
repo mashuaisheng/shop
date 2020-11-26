@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Redis;
 
 use App\Model\WxwModel;
+use App\Model\CartModel;
 use Illuminate\Http\Request;
 use App\Model\GoodsModel;
 use DB;
@@ -13,6 +14,7 @@ class ApiController extends Controller
     {
         app('debugbar')->disable();     //关闭调试
     }
+    //测试
     public function test(){
         $goods_info=[
             'goods_id' =>12345,
@@ -21,7 +23,7 @@ class ApiController extends Controller
         ];
         echo json_encode($goods_info);
     }
-
+    //登录
     public function Login(Request $request){
         //接收code
         $code = $request->get('code');
@@ -30,10 +32,8 @@ class ApiController extends Controller
         $url='https://api.weixin.qq.com/sns/jscode2session?appid='.env('WX_WXC_APPID').'&secret='.env('WX_XCX_SECRET').'&js_code='.$code.'&grant_type=authorization_code';
 
         $data=json_decode(file_get_contents($url),true);
-        //echo '<pre>';print_r($data);echo '</pre>';
-
         //自定义登录状态
-        if (isset($data['errcode'])) {
+        if (isset($data['errno'])) {
             //错误处理
             $response = [
                 'error'=>50001,
@@ -76,21 +76,14 @@ class ApiController extends Controller
     //商品数据
     public function goods(){
         $data=DB::table('goods')->limit(10)->get()->toArray();
-        // echo '<pre>';print_r($data);echo '</pre>';
-        // $response = [
-        //     'error' => 0,
-        //     'msg'   => 'ok',
-        //     'data'  => [
-        //         'list' => $data
-        //     ]
-        // ];
         return $data;
     }
+    //商品详情接口
     public function list(Request $request){
         $goods_id = $request->get('goods_id');
         $data=GoodsModel::select('goods_id','goods_name','shop_price','goods_img','goods_imgs','goods_desc')->where('goods_id',$goods_id)->first()->toArray();
-        // print_r($data);die;
         $array=[
+            "goods_id"=>$data['goods_id'],
             "goods_name"=>$data['goods_name'],
             "shop_price"=>$data['shop_price'],
             "goods_desc"=>$data['goods_desc'],
@@ -99,16 +92,65 @@ class ApiController extends Controller
  
         ];
         return $array;
-        //print_r($goods_id);
-        // $data=DB::table('goods')->where('goods_id',$goods_id)->get();
-        // // dd($data);
-        // return $data;
     }
     
     public function wxclogin(Request $request){
         $code= $request->get('code');
         echo $code;
     }
+    //加入购物车
+    public function addCart(Request $request){
+        $token = $request->get('token');
+        $goods_id = $request->get('goodsid');
+        $goodsinfo=[
+            'goods_id'=>$goods_id,
+            'ctime'=>time(),
+            'buy_number'=>1,
+            'user_id'=>1,
+        ];
+        $res=CartModel::insertGetId($goodsinfo);
+        return $res;
+    }
+    //购物车列表
+     public function cartList()
+    {
+        $user_id = 1;
+        $goods = CartModel::where(['user_id'=>$user_id])->get();
+        if($goods)      //购物车有商品
+        {
+            $goods = $goods->toArray();
+            foreach($goods as $k=>&$v)
+            {
+                $g = GoodsModel::find($v['goods_id']);
+                $v['goods_name'] = $g->goods_name;
+            }
+        }else{          //购物车无商品
+            $goods = [];
+        }
 
+        //echo '<pre>';print_r($goods);echo '</pre>';die;
+        $response = [
+            'errno' => 0,
+            'msg'   => 'ok',
+            'data'  => [
+                'list'  => $goods
+            ]
+        ];
+
+        return $response;
+    }
+    //收藏
+    public function fav(Request $request){
+        $goods_id = $request->get('id');
+        $token = $request->get('token');
+        $uid = 1;
+        $redis_key='ss:goods:fav:'.$uid;//用户收藏的商品有序集合
+        Redis::Zadd($redis_key,time(),$goods_id);//将商品id加入有序集合,并给排序值
+        $response = [
+            'errno' => 0,
+            'msg'   => 'ok'
+        ];
+        return $response;
+    }
 
 }

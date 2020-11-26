@@ -44,3 +44,6 @@ Route::get("/api/onLogin","ApiController@Login");
 Route::get("/api/goods","ApiController@goods");
 Route::get("/api/list","ApiController@list");
 Route::any("/wx/wxclogin","XcxController@login");
+Route::post('/api/add-cart','ApiController@addCart')->middleware('check.token');          //加入购物车
+Route::get("/api/cartlist","ApiController@cartList");
+Route::get("/api/fav","ApiController@fav");  //收藏
